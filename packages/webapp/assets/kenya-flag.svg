@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 60" width="90" height="60">
+  <!-- Black stripe -->
+  <rect width="90" height="12" fill="#000000"/>
+  <!-- Red stripe -->
+  <rect y="12" width="90" height="12" fill="#CE1126"/>
+  <!-- White stripes -->
+  <rect y="24" width="90" height="3" fill="#FFFFFF"/>
+  <rect y="33" width="90" height="3" fill="#FFFFFF"/>
+  <!-- Green stripe -->
+  <rect y="36" width="90" height="12" fill="#007A3D"/>
+  <!-- Black stripe bottom -->
+  <rect y="48" width="90" height="12" fill="#000000"/>
+  
+  <!-- Traditional Maasai shield and spears in center -->
+  <g transform="translate(45,30)">
+    <!-- Shield -->
+    <ellipse cx="0" cy="0" rx="8" ry="12" fill="#8B4513" stroke="#000" stroke-width="0.5"/>
+    <ellipse cx="0" cy="0" rx="6" ry="10" fill="#D2691E"/>
+    <path d="M-4,-8 Q0,-12 4,-8 Q2,-4 0,-6 Q-2,-4 -4,-8" fill="#FFFFFF"/>
+    <path d="M-4,8 Q0,12 4,8 Q2,4 0,6 Q-2,4 -4,8" fill="#FFFFFF"/>
+    
+    <!-- Spears -->
+    <line x1="-12" y1="-15" x2="-12" y2="15" stroke="#8B4513" stroke-width="1"/>
+    <line x1="12" y1="-15" x2="12" y2="15" stroke="#8B4513" stroke-width="1"/>
+    <polygon points="-12,-15 -10,-18 -14,-18" fill="#C0C0C0"/>
+    <polygon points="12,-15 10,-18 14,-18" fill="#C0C0C0"/>
+  </g>
+</svg>

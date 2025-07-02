@@ -1,45 +1,88 @@
 import fs from 'node:fs/promises';
 import { type HttpRequest, type HttpResponseInit, type InvocationContext, app } from '@azure/functions';
 import { AzureOpenAIEmbeddings } from '@langchain/openai';
-import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
+import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import { AzureCosmosDBNoSQLVectorStore } from '@langchain/azure-cosmosdb';
 import { OllamaEmbeddings } from '@langchain/ollama';
 import { FaissStore } from '@langchain/community/vectorstores/faiss';
 import 'dotenv/config';
-import { BlobServiceClient } from '@azure/storage-blob';
 import { badRequest, serviceUnavailable, ok } from '../http-response.js';
 import { ollamaEmbeddingsModel, faissStoreFolder } from '../constants.js';
 import { getAzureOpenAiTokenProvider, getCredentials } from '../security.js';
 
-export async function postDocuments(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-  const storageUrl = process.env.AZURE_STORAGE_URL;
-  const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME;
+// Kenyan law websites that can be scraped
+const KENYAN_LAW_SOURCES = {
+  'kenyalaw.org': {
+    baseUrl: 'https://new.kenyalaw.org/',
+    selector: '.content, .article-body, .law-content, p, div.text-content',
+    name: 'Kenya Law Reports',
+  },
+  'parliament.go.ke': {
+    baseUrl: 'http://www.parliament.go.ke/',
+    selector: '.content, .article, .main-content, p',
+    name: 'Parliament of Kenya',
+  },
+  'judiciary.go.ke': {
+    baseUrl: 'https://www.judiciary.go.ke/',
+    selector: '.content, .article-content, .main-content, p',
+    name: 'Judiciary of Kenya',
+  },
+};
+
+export async function postWebScraper(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   const azureOpenAiEndpoint = process.env.AZURE_OPENAI_API_ENDPOINT;
 
   try {
-    context.log('Starting document upload process');
-    // Get the uploaded file from the request
-    const parsedForm = await request.formData();
+    context.log('Starting web scraping process');
 
-    if (!parsedForm.has('file')) {
-      context.log('No file found in form data');
-      return badRequest('"file" field not found in form data.');
+    // Get the URL and optional selector from the request
+    const requestBody = (await request.json()) as { url: string; selector?: string; source?: string };
+    const { url, selector, source } = requestBody;
+
+    if (!url) {
+      return badRequest('URL is required in the request body.');
     }
 
-    // Type mismatch between Node.js FormData and Azure Functions FormData
-    const file = parsedForm.get('file') as any as File;
-    const filename = file.name;
-    context.log(`Processing file: ${filename}, size: ${file.size}`);
+    // Validate that the URL is from a trusted Kenyan law source
+    const domain = new URL(url).hostname.replace('www.', '');
+    const trustedSource = Object.keys(KENYAN_LAW_SOURCES).find((key) => domain.includes(key));
 
-    // Extract text from the PDF
-    context.log('Starting PDF text extraction');
-    const loader = new PDFLoader(file, {
-      splitPages: false,
+    if (!trustedSource) {
+      return badRequest(
+        `URL must be from a trusted Kenyan law source. Supported domains: ${Object.keys(KENYAN_LAW_SOURCES).join(', ')}`,
+      );
+    }
+
+    const sourceConfig = KENYAN_LAW_SOURCES[trustedSource as keyof typeof KENYAN_LAW_SOURCES];
+    const contentSelector = selector || sourceConfig.selector;
+
+    context.log(`Scraping content from: ${url}`);
+    context.log(`Using selector: ${contentSelector}`);
+
+    // Load content from the web page
+    const loader = new CheerioWebBaseLoader(url, {
+      selector: contentSelector as any, // Type assertion for selector
     });
-    const rawDocument = await loader.load();
-    rawDocument[0].metadata.source = filename;
-    context.log(`Extracted ${rawDocument[0].pageContent.length} characters from PDF`);
+
+    const rawDocuments = await loader.load();
+
+    if (!rawDocuments || rawDocuments.length === 0) {
+      return badRequest('No content could be extracted from the provided URL.');
+    }
+
+    // Set metadata for the documents
+    for (const document of rawDocuments) {
+      document.metadata = {
+        ...document.metadata,
+        source: source || `${sourceConfig.name || 'Kenyan Law'} - ${url}`,
+        url,
+        domain,
+        scrapedAt: new Date().toISOString(),
+      };
+    }
+
+    context.log(`Extracted ${rawDocuments[0].pageContent.length} characters from web page`);
 
     // Split the text into smaller chunks
     context.log('Starting text splitting');
@@ -47,7 +90,7 @@ export async function postDocuments(request: HttpRequest, context: InvocationCon
       chunkSize: 1500,
       chunkOverlap: 100,
     });
-    const documents = await splitter.splitDocuments(rawDocument);
+    const documents = await splitter.splitDocuments(rawDocuments);
     context.log(`Split into ${documents.length} chunks`);
 
     // Generate embeddings and save in database
@@ -79,29 +122,15 @@ export async function postDocuments(request: HttpRequest, context: InvocationCon
       }
     }
 
-    context.log(
-      `Storage URL: ${storageUrl ? 'configured' : 'not configured'}, Container: ${containerName || 'not configured'}`,
-    );
-    if (storageUrl && containerName) {
-      // Upload the PDF file to Azure Blob Storage
-      context.log(`Uploading file to blob storage: "${containerName}/${filename}"`);
-      const credentials = getCredentials();
-      const blobServiceClient = new BlobServiceClient(storageUrl, credentials);
-      const containerClient = blobServiceClient.getContainerClient(containerName);
-      const blockBlobClient = containerClient.getBlockBlobClient(filename);
-      const buffer = await file.arrayBuffer();
-      await blockBlobClient.upload(buffer, file.size, {
-        blobHTTPHeaders: { blobContentType: 'application/pdf' },
-      });
-      context.log('File uploaded to blob storage successfully');
-    } else {
-      context.log('No Azure Blob Storage connection string set, skipping upload.');
-    }
-
-    return ok({ message: 'PDF file uploaded successfully.' });
+    return ok({
+      message: 'Web content scraped and indexed successfully.',
+      documentsProcessed: documents.length,
+      source: rawDocuments[0].metadata.source,
+      url,
+    });
   } catch (_error: unknown) {
     const error = _error as Error;
-    context.error(`Error when processing document-post request: ${error.message}`);
+    context.error(`Error when processing web scraper request: ${error.message}`);
     context.error(`Error stack: ${error.stack}`);
 
     return serviceUnavailable(`Service temporarily unavailable. Error: ${error.message}`);
@@ -117,9 +146,9 @@ async function checkFolderExists(folderPath: string): Promise<boolean> {
   }
 }
 
-app.http('documents-post', {
-  route: 'documents',
+app.http('web-scraper-post', {
+  route: 'scrape',
   methods: ['POST'],
   authLevel: 'anonymous',
-  handler: postDocuments,
+  handler: postWebScraper,
 });

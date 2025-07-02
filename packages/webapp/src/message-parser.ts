@@ -1,5 +1,27 @@
 import { type HTMLTemplateResult, html, nothing } from 'lit';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { AIChatMessage } from '@microsoft/ai-chat-protocol';
+
+// Simple markdown parser for basic formatting
+function parseMarkdown(text: string): HTMLTemplateResult {
+  let processedText = text;
+
+  // Handle bold text (**text** or __text__)
+  processedText = processedText.replaceAll(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  processedText = processedText.replaceAll(/__(.*?)__/g, '<strong>$1</strong>');
+
+  // Handle italic text (*text* or _text_)
+  processedText = processedText.replaceAll(/\*(.*?)\*/g, '<em>$1</em>');
+  processedText = processedText.replaceAll(/_(.*?)_/g, '<em>$1</em>');
+
+  // Handle line breaks
+  processedText = processedText.replaceAll('\n', '<br>');
+
+  // Handle numbered lists (1. item)
+  processedText = processedText.replaceAll(/(\n|^)(\d+)\.\s+/g, '$1<br><strong>$2.</strong> ');
+
+  return html`${unsafeHTML(processedText)}`;
+}
 
 export type ParsedMessage = {
   html: HTMLTemplateResult;
@@ -15,7 +37,7 @@ export function parseMessageIntoHtml(
 ): ParsedMessage {
   if (message.role === 'user') {
     return {
-      html: html`${message.content}`,
+      html: parseMarkdown(message.content),
       citations: [],
       followupQuestions: [],
       role: message.role,
@@ -39,7 +61,8 @@ export function parseMessageIntoHtml(
   const parts = text.split(/\[([^\]]+)]/g);
   const result = html`${parts.map((part, index) => {
     if (index % 2 === 0) {
-      return html`${part}`;
+      // Process markdown formatting for non-citation parts
+      return html`${parseMarkdown(part)}`;
     }
 
     if (index + 1 < parts.length) {

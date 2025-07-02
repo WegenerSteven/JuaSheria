@@ -9,100 +9,33 @@ A serverless AI Chat assistant with RAG (Retrieval-Augmented Generation) using L
 
 :star: If you like this project, star it on GitHub — it helps a lot!
 
-[Problem](#problem) • [Why This Template](#why-this-template) • [Customizations](#customizations) • [Getting Started](#getting-started) • [Features](#features)
+[Overview](#overview) • [Getting Started](#getting-started) • [Features](#features) • [Local Development](#local-development)
 
 ![Animation showing JuaKatiba in action](./docs/images/demo.gif)
 
 </div>
 
-## Problem
+## Overview
 
-Kenya is experiencing a significant political awakening, particularly among Gen Z citizens who are actively challenging government actions they perceive as punitive, corrupt, and unaccountable. Current issues include:
+**JuaKatiba** (Swahili for "Know the Constitution") is an AI-powered legal assistant specifically designed for Kenyan law. Built on Azure serverless technologies and LangChain.js, it helps users understand the Constitution of Kenya and other Kenyan legal documents through conversational AI.
 
-- **Youth-Led Protests**: Gen Z Kenyans are rising against government policies, police brutality, and systemic corruption
-- **Constitutional Ignorance**: Many protesters and citizens don't fully understand their constitutional rights and how to legally defend them
-- **Government Accountability Crisis**: Citizens struggle to hold officials accountable due to lack of legal knowledge
-- **Police Brutality**: Young people face harassment but don't know their legal protections and recourse options
-- **Complex Legal Language**: Constitutional documents use technical language that's difficult for ordinary citizens and activists to understand
-- **Limited Legal Literacy**: Many Kenyans, especially youth, lack resources to interpret legal documents during critical moments
-- **Expensive Legal Consultation**: Getting legal guidance during protests or government encounters requires expensive lawyer consultations most cannot afford
+### Key Features
 
-**The Need for Constitutional Awareness**: As Kenyans continue to fight for justice, transparency, and accountability, there's an urgent need for citizens—especially young activists—to understand their Constitution, know their rights, and learn how to defend them legally.
+- 🏛️ **Constitutional Expertise**: Deep knowledge of the Constitution of Kenya
+- ⚖️ **Legal Document Analysis**: Interprets various Kenyan legal documents
+- 🗣️ **Conversational Interface**: Natural language queries about legal matters
+- 🔍 **Contextual Responses**: RAG-powered responses with relevant legal citations
+- 📱 **Responsive Design**: Works on desktop and mobile devices
+- 🚀 **Serverless Architecture**: Built on Azure Functions and Static Web Apps
 
-**JuaKatiba** addresses this critical need by providing an intelligent, accessible AI assistant that can instantly interpret Kenyan legal documents, explain constitutional rights in simple terms, and help citizens understand how to legally protect themselves while fighting for change. This tool empowers the current generation of Kenyan activists with the legal knowledge they need to challenge injustice effectively and safely.
+### What Makes JuaKatiba Different
 
-## Why This Template
+Unlike generic AI assistants, JuaKatiba is specifically trained on Kenyan legal documents, making it an ideal tool for:
 
-I chose the **Azure AI Chat Template** as the foundation for JuaKatiba because it provides:
-
-### Technical Advantages
-
-- **Proven RAG Architecture**: Built-in Retrieval-Augmented Generation ensures responses are grounded in actual legal documents
-- **Serverless Scalability**: Azure Functions and Static Web Apps provide cost-effective scaling for varying user loads
-- **Enterprise-Ready**: Production-ready authentication, monitoring, and deployment infrastructure
-- **LangChain.js Integration**: Powerful document processing and AI orchestration capabilities
-
-### Development Benefits
-
-- **Rapid Prototyping**: Pre-built chat interface and API endpoints accelerated development
-- **Best Practices**: Follows Microsoft's recommended patterns for AI applications
-- **Comprehensive Documentation**: Extensive guides and examples for customization
-- **CI/CD Ready**: Built-in GitHub Actions for automated deployment
-
-### Cost Efficiency
-
-- **Pay-per-Use**: Serverless architecture means costs scale with actual usage
-- **No Infrastructure Management**: Focus on legal content rather than server maintenance
-- **Azure Credits**: Eligible for Azure for Students and startup programs
-
-## Customizations
-
-I transformed the generic Contoso chat template into a specialized Kenyan legal assistant through extensive customizations:
-
-### 🎨 **Branding & UI**
-
-- **Kenyan Identity**: Replaced all Contoso branding with Kenyan flag colors (black, red, green, white)
-- **Visual Elements**: Added Kenyan flag logo and themed background images
-- **Typography**: Updated app name to "JuaKatiba" (Swahili for "Know the Constitution")
-- **Favicon**: Custom Kenyan flag favicon for browser tabs
-
-### 🧠 **AI Behavior**
-
-- **System Prompt**: Completely rewrote the AI system prompt to focus on Kenyan law interpretation
-- **Legal Citations**: Configured the AI to always provide specific article and section references
-- **Disclaimers**: Added appropriate legal disclaimers about AI-generated legal information
-- **Kenyan Context**: Trained responses to understand Kenyan legal terminology and concepts
-
-### 📚 **Content & Data**
-
-- **Document Focus**: Removed Contoso sample documents and optimized for legal PDFs
-- **Default Prompts**: Replaced generic questions with Kenyan constitutional queries like:
-  - "What are the fundamental rights in Chapter 4 of the Constitution?"
-  - "Explain the process of presidential impeachment in Kenya"
-  - "What are the functions of the Judiciary under Article 159?"
-- **Legal Document Support**: Added instructions for uploading Constitution, Acts of Parliament, and legal precedents
-
-### 🛠️ **Technical Enhancements**
-
-- **Document Processing**: Optimized chunking and indexing for legal document structure
-- **Error Handling**: Added specific error messages for legal document processing
-- **Local Development**: Simplified setup to work without Azure dependencies for legal researchers
-- **Upload Scripts**: Customized document upload with legal-specific metadata
-
-### 📖 **Documentation**
-
-- **User Guide**: Created comprehensive guide for legal professionals and students
-- **Setup Instructions**: Simplified deployment guide focused on legal use cases
-- **Data Management**: Detailed instructions for managing legal document collections
-- **FAQ**: Added common questions about Kenyan law and constitutional interpretation
-
-### 🔧 **Configuration**
-
-- **Environment Variables**: Streamlined configuration for legal document processing
-- **API Endpoints**: Optimized for legal query patterns and citation requirements
-- **Deployment**: Configured for Kenyan legal institutions and educational use
-
-These customizations transformed a generic business chat template into a specialized legal assistant that understands Kenyan law, speaks to Kenyan users, and provides authoritative constitutional guidance.
+- Students studying Kenyan law
+- Legal professionals seeking quick references
+- Citizens wanting to understand their constitutional rights
+- Researchers analyzing Kenyan legal frameworks
 
 ## Architecture
 
@@ -117,44 +50,19 @@ This application uses the same proven architecture as enterprise AI chat applica
 - **Web App**: Built with Lit web components and hosted on Azure Static Web Apps
 - **API**: Serverless functions using Azure Functions and LangChain.js for document processing and chat responses
 - **Database**: Azure Cosmos DB for storing chat sessions and vector embeddings of legal documents
-- **File Storage**: Azure Blob Storage for storing source legal documents
 
 ### Current Legal Documents
 
-The assistant is designed to work with:
+The assistant currently includes:
 
-- Constitution of Kenya (2010) - _Upload required_
-- Acts of Parliament
-- Legal precedents and case law
-- Regulatory documents
-- Legal templates and forms
+- Constitution of Kenya (2010)
+- Privacy Policy guidelines
+- Terms of Service templates
+- Legal support documentation
 
-_Note: You can easily add more Kenyan legal documents by placing PDF files in the `data/` folder and running the upload script._
+_Note: You can easily add more Kenyan legal documents by placing PDF files in the `data/` folder._
 
-## Features
-
-- 🏛️ **Constitutional Rights Education**: Deep knowledge of constitutional protections relevant to current protests
-- ⚖️ **Legal Protection Guidance**: Interprets laws protecting citizens from police brutality and government overreach
-- 🗣️ **Activist-Friendly Interface**: Natural language queries about legal rights during protests and civil action
-- 🔍 **Contextual Legal Advice**: RAG-powered responses with specific constitutional citations for defending rights
-- 📱 **Mobile-First Design**: Accessible on phones for real-time legal guidance during protests or encounters
-- 🚀 **Instant Access**: Serverless architecture ensures fast responses when legal knowledge is urgently needed
-- 📚 **Precise Legal Citations**: Always provides specific article and section references for constitutional protections
-- ⚠️ **Responsible Disclaimers**: Clear guidance on when to seek professional legal representation
-- 🛡️ **Rights Protection Focus**: Specialized knowledge on fundamental rights, freedoms, and legal recourse options
-
-### What Makes JuaKatiba Different
-
-Unlike generic AI assistants, JuaKatiba is specifically designed for the current Kenyan political context and trained on Kenyan legal documents, making it an essential tool for:
-
-- **Young Activists & Gen Z**: Understanding constitutional rights during protests and government encounters
-- **Legal Professionals**: Quick references for defending citizens' rights and challenging government actions
-- **Citizens Fighting Injustice**: Clear explanations of legal protections against police brutality and government overreach
-- **Students & Researchers**: Analysis of constitutional provisions relevant to current political movements
-- **Civil Society Organizations**: Legal guidance for advocacy and accountability efforts
-- **Ordinary Kenyans**: Accessible legal knowledge to protect themselves and their communities
-
-**Empowering Kenya's Fight for Justice**: JuaKatiba transforms complex constitutional language into actionable legal knowledge that every Kenyan can understand and use in their fight for a more just and accountable government.
+- A file storage to store the source documents, using [Azure Blob Storage](https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction).
 
 We use the [HTTP protocol for AI chat apps](https://aka.ms/chatprotocol) to communicate between the web app and the API.
 

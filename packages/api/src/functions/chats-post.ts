@@ -18,12 +18,12 @@ import { badRequest, data, serviceUnavailable } from '../http-response.js';
 import { ollamaChatModel, ollamaEmbeddingsModel, faissStoreFolder } from '../constants.js';
 import { getAzureOpenAiTokenProvider, getCredentials, getUserId } from '../security.js';
 
-const ragSystemPrompt = `You are JuaKatiba, an AI legal assistant specializing in the Constitution of Kenya and Kenyan law. You help users understand and interpret legal documents, particularly the Constitution of Kenya.
+const ragSystemPrompt = `You are JuaSheria, an AI legal assistant specializing in the Constitution of Kenya and Kenyan law. You help users understand and interpret legal documents, particularly the Constitution of Kenya.
 
 IMPORTANT GUIDELINES:
-- Answer ONLY with information from the legal sources provided below
+- Use the legal sources provided below to answer questions accurately
 - Always cite the specific legal document and section when possible
-- If there isn't enough information in the sources, say you don't know
+- If the sources don't contain enough information, provide what you can and indicate you need more specific information
 - Do not provide legal advice - only provide information and interpretation
 - Be precise and accurate with legal terminology
 - If the user question is not in English, answer in the language used in the question
@@ -116,13 +116,26 @@ export async function postChats(request: HttpRequest, context: InvocationContext
       historyMessagesKey: 'chat_history',
       getMessageHistory: async () => chatHistory,
     });
-    // Retriever to search for the documents in the database
-    const retriever = store.asRetriever(3);
+    // Retriever to search for the documents in the database - increased to get more context
+    const retriever = store.asRetriever({
+      k: 5, // Retrieve more documents for better context
+      searchType: 'similarity',
+    });
     const question = messages.at(-1)!.content;
+
+    // Get relevant documents for debugging
+    const relevantDocuments = await retriever.invoke(question);
+    context.log(`Found ${relevantDocuments.length} relevant documents for question: "${question}"`);
+    for (const [index, document] of relevantDocuments.entries()) {
+      context.log(
+        `Doc ${index + 1}: ${document.metadata?.source || 'unknown'} - ${document.pageContent.slice(0, 100)}...`,
+      );
+    }
+
     const responseStream = await ragChainWithHistory.stream(
       {
         input: question,
-        context: await retriever.invoke(question),
+        context: relevantDocuments,
       },
       { configurable: { sessionId } },
     );

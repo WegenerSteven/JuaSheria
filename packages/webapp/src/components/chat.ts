@@ -53,7 +53,7 @@ export const chatDefaultOptions: ChatComponentOptions = {
     followUpQuestionsTitle: 'Related legal questions:',
     chatInputPlaceholder: 'Ask about the Constitution of Kenya or any legal matter...',
     chatInputButtonLabel: 'Send question',
-    assistant: 'JuaKatiba Legal Assistant',
+    assistant: 'JuaSheria Legal Assistant',
     user: 'You',
     errorMessage: 'Sorry, I am currently experiencing an issue. Please try again.',
     newChatButton: 'New legal consultation',

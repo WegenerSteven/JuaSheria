@@ -1,7 +1,7 @@
 {
-  "name": "juakatiba-webapp",
+  "name": "juasheria-webapp",
   "version": "1.0.0",
-  "description": "JuaKatiba - AI Assistant for Kenyan Constitution and Laws",
+  "description": "JuaSheria - AI Assistant for Kenyan Constitution and Laws",
   "private": true,
   "type": "module",
   "scripts": {

@@ -1,10 +1,10 @@
-# JuaKatiba User Guide
+# Jua Sheria User Guide
 
-## Welcome to JuaKatiba!
+## Welcome to Jua Sheria!
 
-**JuaKatiba** (Swahili for "Know the Constitution") is your AI-powered assistant for understanding the Constitution of Kenya and other Kenyan laws.
+**Jua Sheria** (Swahili for "Know the Law") is your AI-powered assistant for understanding the Constitution of Kenya and other Kenyan laws.
 
-## How to Use JuaKatiba
+## How to Use Jua Sheria
 
 ### Getting Started
 
@@ -33,11 +33,11 @@
 
 ### Important Notes
 
-⚖️ **Legal Information, Not Legal Advice**: JuaKatiba provides information and interpretation of legal documents but does not provide legal advice.
+⚖️ **Legal Information, Not Legal Advice**: Jua Sheria provides information and interpretation of legal documents but does not provide legal advice.
 
 📚 **Source-Based Responses**: All answers are based on official legal documents and include citations.
 
-🔍 **Limitations**: If information isn't available in the loaded documents, JuaKatiba will let you know.
+🔍 **Limitations**: If information isn't available in the loaded documents, Jua Sheria will let you know.
 
 💼 **Professional Consultation**: For complex legal matters, always consult with a qualified legal professional.
 

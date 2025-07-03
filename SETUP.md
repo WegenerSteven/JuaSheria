@@ -1,4 +1,4 @@
-# JuaKatiba Setup Guide
+# Jua Sheria Setup Guide
 
 ## Quick Setup for Your Kenyan Constitution Assistant
 
@@ -38,7 +38,7 @@ npm run upload:docs
 
 This processes your legal documents and makes them available to the AI.
 
-### 5. Access JuaKatiba
+### 5. Access Jua Sheria
 
 Open your browser to: http://localhost:8000
 
